@@ -1,6 +1,7 @@
 from flask import Flask, url_for, render_template, session, escape, request, redirect, g, jsonify
 from contextlib import closing
 from random import choice
+import string
 
 SECRET_KEY = 'Z;t\x02\x9eB\x91\xac\xd3\x98\xd8\xc6\xbc@%\xda\x95\x13\xaeJ\xed"\xcfT'
 DEBUG = True
@@ -13,6 +14,10 @@ def gen_id():
     return ''.join([choice(string.letters + string.digits) for i in range(20)])
 
 @app.route('/')
+def game():
+    return render_template('game.html', uid=gen_id())
+
+@app.route('/hello')
 def home():
     return 'hello!'
 
