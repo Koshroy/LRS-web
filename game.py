@@ -28,20 +28,20 @@ class NonEuclidean:
     LEFT   = 1;
     RIGHT  = 2;
     BOTTOM = 3;
-    '{a,b} a = target sector number
-    '      b = target side
-    'TOP LEFT RIGHT BOTTOM
+    #{a,b} a = target sector number
+    #      b = target side
+    #TOP LEFT RIGHT BOTTOM
     Mapping = { {{{1,BOTTOM},{1,RIGHT},{1,LEFT},{1,TOP}},
-                 {{0,BOTTOM},{0,RIGHT},{0,LEFT},{0,TOP}}}  '2
+                 {{0,BOTTOM},{0,RIGHT},{0,LEFT},{0,TOP}}}  #2
                 
                 {{{2,BOTTOM},{1,TOP},{1,BOTTOM},{2,TOP}},
                  {{0,LEFT},{2,RIGHT},{2,LEFT},{0,RIGHT}},
-                 {{0,BOTTOM},{1,RIGHT},{1,LEFT},{0,TOP}}}  '3
+                 {{0,BOTTOM},{1,RIGHT},{1,LEFT},{0,TOP}}}  #3
                 
                 {{{1,RIGHT},{3,RIGHT},{1,LEFT},{2,TOP}},
                  {{2,BOTTOM},{0,RIGHT},{0,TOP},{3,TOP}},
                  {{0,BOTTOM},{3,BOTTOM},{3,LEFT},{1,TOP}},
-                 {{1,BOTTOM},{2,RIGHT},{0,LEFT},{2,LEFT}}}  '4
+                 {{1,BOTTOM},{2,RIGHT},{0,LEFT},{2,LEFT}}}  #4
                 };
 
 class Board(pcount):
@@ -50,23 +50,24 @@ class Board(pcount):
     def __init__(self,pcount):
         for i in range(0,pcount-1,1)
             self.sectors.append(Sector());
-            self.players.append(Player(i));
+            self.players.append(Player(i,this));
 
 
-    'functions that are controlled directly by player
-    'These return false if the action is not allowed
-    'and true if it is. If it is allowed, then performs
-    'action
+    #functions that are controlled directly by player
+    #These return false if the action is not allowed
+    #and true if it is. If it is allowed, then performs
+    #action
 
-    'I would LIKE to put this in the player class, but theres an issue of
-    'being able to access the sector classes
+    #I would LIKE to put this in the player class, but theres an issue of
+    #being able to access the sector classes
 
     def TryGoUp(pnum):
         here = players[pnum].sector;
         crosswall = sectors[here].Walls.horz[players[pnum].x,players[pnum].y];
-        if(crosswall.IsPassable == true):
-            'if(crosswall.kind == Walltype.Superhot)
-                'attack player
+        if(crosswall.IsPassable == true && 
+           players[pnum].movesleft>0):
+            #if(crosswall.kind == Walltype.Superhot)
+                #attack player
             if(crosswall.kind == Walltype.Empty):
                 GoUp(pnum);
                 return true;
@@ -74,7 +75,8 @@ class Board(pcount):
     def TryGoDown(pnum):
         here = players[pnum].sector;
         crosswall = sectors[here].Walls.horz[players[pnum].x,players[pnum].y+1];
-        if(crosswall.IsPassable == true):
+        if(crosswall.IsPassable == true && 
+           players[pnum].movesleft>0):
             if(crosswall.kind == Walltype.Empty):
                 GoDown(pnum);
                 return true;
@@ -82,7 +84,8 @@ class Board(pcount):
     def TryGoLeft(pnum):
         here = players[pnum].sector;
         crosswall = sectors[here].Walls.vert[players[pnum].x,players[pnum].y];
-        if(crosswall.IsPassable == true):
+        if(crosswall.IsPassable == true && 
+           players[pnum].movesleft>0):
             if(crosswall.kind == Walltype.Empty):
                 GoLeft(pnum);
                 return true;
@@ -90,28 +93,33 @@ class Board(pcount):
     def TryGoRight(pnum):
         here = players[pnum].sector;
         crosswall = sectors[here].Walls.vert[players[pnum].x+1,players[pnum].y];
-        if(crosswall.IsPassable == true):
+        if(crosswall.IsPassable == true && 
+           players[pnum].movesleft>0):
             if(crosswall.kind == Walltype.Empty):
                 GoRight(pnum);
                 return true;
         return false;
 
     def GoUp(pnum):
+        players[pnum].movesleft--;
         if(players[pnum].y>0):
             players[pnum].y-=1;
         else:
             NonEucJump(pnum,misc.UP);
     def GoDown(pnum):
+        players[pnum].movesleft--;
         if(players[pnum].y<4):
             players[pnum].y+=1;
         else:
             NonEucJump(pnum,misc.DOWN);
     def GoLeft(pnum):
+        players[pnum].movesleft--;
         if(players[pnum].x>0):
             players[pnum].x-=1;
         else:
             NonEucJump(pnum,misc.LEFT);
     def GoRight(pnum):
+        players[pnum].movesleft--;
         if(players[pnum].x<4):
             players[pnum].x+=1;
         else:
@@ -145,8 +153,8 @@ class Wallmap:
     def __init__(self):
         self.horz = Wall[5,6];
         self.vert = Wall[6,5];
-    'how we decide to define the counting order for horz and vert will affect
-    'the correctness of the rotation
+    #how we decide to define the counting order for horz and vert will affect
+    #the correctness of the rotation
     def RotL():
         for x = range(0,4,1):
             for y = range(0,5,1):
@@ -207,15 +215,172 @@ class Wall:
                 self.kind = Walltype.Nothot;
 
 class Player:
-    def __init__(self,pnum):
+    def __init__(self,pnum,board):
         self.maxmoves    = 3;
         self.movesleft   = 0;
         self.hp          = 15;
         self.maxattacks  = 1;
         self.attacksleft = 1;
+        self.mayboost    = true;
         self.x           = 2;
         self.y           = 2;
         self.sector      = pnum;
         self.holding     = misc.NoPSource;
         self.iconstate   = RobotIcon.Normal;
-    
+        self.hand        = Hand();
+
+class Hand:
+    def __init__(self):
+        self.Cards = [];
+        for i in range(1,7):
+            self.Draw();
+    def Draw():
+        #should fail here because both DECK and playerhandlimit undefined
+        if(!DECK.IsEmpty() && self.Cards.size() < playerhandlimit):
+            newcard = DECK.pop();
+            self.Cards.append(newcard);
+    def Discard(i):
+        self.Cards.pop(i);
+
+class Deck:
+    self.Cards = Card[128];
+    def __init__(self):
+        #assign the correct ratios
+        random.shuffle(self.Cards);
+
+class Card:
+    __init__(self):
+        self.ID = 0;
+        self.Active = 0;
+    #if this were C, Id use jump tables.
+    #Theres GOT to be a better way to do it in python than this
+    def Play():
+        if(self.ID == 0):#9-Volt Battery
+            a = 0;
+        else if(self.ID == 1):#Alternate Universe
+            a = 0;
+        else if(self.ID == 2):#Annihilate Wall
+            a = 0;
+        else if(self.ID == 3):#Anti-Anti-Matter
+            a = 0;
+        else if(self.ID == 4):#Big Bang
+            a = 0;
+        else if(self.ID == 5):#Boost 2
+            a = 0;
+        else if(self.ID == 6):#Boost 3
+            a = 0;
+        else if(self.ID == 7):#Boost 4
+            a = 0;
+        else if(self.ID == 8):#Boost 5
+            a = 0;
+        else if(self.ID == 9):#Boost 6
+            a = 0;
+        else if(self.ID == 10):#BSOD
+            a = 0;
+        else if(self.ID == 11):#Bypass Force Field
+            a = 0;
+        else if(self.ID == 12):#Destroy Panel
+            a = 0;
+        else if(self.ID == 13):#Displace Atoms
+            a = 0;
+        else if(self.ID == 14):#Drain Battery
+            a = 0;
+        else if(self.ID == 15):#Electrostatic Charge
+            a = 0;
+        else if(self.ID == 16):#Evaporate Water
+            a = 0;
+        else if(self.ID == 17):#Evil Twin
+            a = 0;
+        else if(self.ID == 18):#Friendly Neurons
+            a = 0;
+        else if(self.ID == 19):#GPS Error
+            a = 0;
+        else if(self.ID == 20):#Gravity Well
+            a = 0;
+        else if(self.ID == 21):#Holographic Wall
+            a = 0;
+        else if(self.ID == 22):#Holtzman Shield
+            a = 0;
+        else if(self.ID == 23):#Hull Plating
+            a = 0;
+        else if(self.ID == 24):#Hydrated Air
+            a = 0;
+        else if(self.ID == 25):#Intercept Packets
+            a = 0;
+        else if(self.ID == 26):#Internet Worm
+            a = 0;
+        else if(self.ID == 27):#Long Jump
+            a = 0;
+        else if(self.ID == 28):#Magnetic Restraints
+            a = 0;
+        else if(self.ID == 29):#Materialize Wall
+            a = 0;
+        else if(self.ID == 30):#Melt Hallway
+            a = 0;
+        else if(self.ID == 31):#Nanite Infusion
+            a = 0;
+        else if(self.ID == 32):#Panic
+            a = 0;
+        else if(self.ID == 33):#Port Scan
+            a = 0;
+        else if(self.ID == 34):#Power Surge
+            a = 0;
+        else if(self.ID == 35):#Projection Beam
+            a = 0;
+        else if(self.ID == 36):#Quantum Mirror
+            a = 0;
+        else if(self.ID == 37):#R2 Unit
+            a = 0;
+        else if(self.ID == 38):#RAM Upgrade
+            a = 0;
+        else if(self.ID == 39):#Reboot
+            a = 0;
+        else if(self.ID == 40):#Reconfigure Hull
+            a = 0;
+        else if(self.ID == 41):#Reconfigure Tile
+            a = 0;
+        else if(self.ID == 42):#Recycle
+            a = 0;
+        else if(self.ID == 43):#Repair Kit
+            a = 0;
+        else if(self.ID == 44):#Reprogram Module
+            a = 0;
+        else if(self.ID == 45):#Robocracy
+            a = 0;
+        else if(self.ID == 46):#Scan CPU
+            a = 0;
+        else if(self.ID == 47):#Security Camera
+            a = 0;
+        else if(self.ID == 48):#Short Jump
+            a = 0;
+        else if(self.ID == 49):#Siphon Power
+            a = 0;
+        else if(self.ID == 50):#Soldering Iron
+            a = 0;
+        else if(self.ID == 51):#Solitaire
+            a = 0;
+        else if(self.ID == 52):#Spyware
+            a = 0;
+        else if(self.ID == 53):#Superheated Air
+            a = 0;
+        else if(self.ID == 54):#Superheated Wall
+            a = 0;
+        else if(self.ID == 55):#Suppression Gas
+            a = 0;
+        else if(self.ID == 56):#Suspensor Shield
+            a = 0;
+        else if(self.ID == 57):#Time Crystals
+            a = 0;
+        else if(self.ID == 58):#Tractor Beam
+            a = 0;
+        else if(self.ID == 59):#Turbo Charge
+            a = 0;
+        else if(self.ID == 60):#Unlock Force Field
+            a = 0;
+        else if(self.ID == 61):#Virus
+            a = 0;
+        else if(self.ID == 62):#Wipe Memory
+            a = 0;
+        else if(self.ID == 63):#Wormhole
+            a = 0;
+        return false;
