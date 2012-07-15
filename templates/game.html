@@ -11,7 +11,7 @@
   <canvas id="gameCanvas" width="640" height="640"></canvas>
 </body>
 
-<div id="tileSheetDiv"><img id="tileSheet" src="{{ url_for('static', filename='Placeholders.png') }}" /></div>
+<img style="display: none;" id="tileSheet" src="{{ url_for('static', filename='Placeholders.png') }}" />
 
 <script type="text/javascript" src="{{ url_for('static', filename='jquery-1.7.2.min.js') }}"></script>
 <script type="text/javascript" src="{{ url_for('static', filename='tilesheet.js') }}"></script>
