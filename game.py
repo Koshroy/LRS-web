@@ -44,6 +44,11 @@ class NonEuclidean:
                  {{1,BOTTOM},{2,RIGHT},{0,LEFT},{2,LEFT}}}  #4
                 };
 
+class Mazecell:
+    def __init__(self,i):
+        self.visited=false;
+        
+
 class Board(pcount):
     sectors = []
     players = []
@@ -52,7 +57,7 @@ class Board(pcount):
             self.sectors.append(Sector());
             self.players.append(Player(i,this));
 
-
+            
     #functions that are controlled directly by player
     #These return false if the action is not allowed
     #and true if it is. If it is allowed, then performs
@@ -141,6 +146,64 @@ class Sector:
     def __init__(self):
         self.Walls = Wallmap();
         self.Floor = Floorplan();
+        BuildMaze();
+    def BuildMaze():
+        #the maze must meet the following criterion:
+        # each sector's center has a path to each exit
+        # each sector is in itself, acyclic
+
+
+        #Destroy walls until cells form connected acyclic graph
+        w = [[i] in range(0,24)];
+        random.shuffle(w);
+        temp = Mazecell[25];
+        for i in range(0,24):
+            j=w[i];
+            x=j%5;
+            y=(j-x)/5;
+            if(temp[j].visited==true):
+                continue;
+            temp[j].visited=true;
+            
+            v = random.randrange(0,3,1);
+            if(v==misc.TOP && y>0):
+                if(temp[j-5].visited==false):
+                    temp[j-5].visited=true;
+                    self.Walls.horz[x,y-1]=Walltype.Empty;
+            if(v==misc.LEFT && x>0):
+                if(temp[j-1].visited==false):
+                    temp[j-5].visited=true;
+                    self.Walls.horz[x-1,y]=Walltype.Empty;
+            if(v==misc.RIGHT && x<4):
+                if(temp[j+1].visited==false):
+                    temp[j-5].visited=true;
+                    self.Walls.horz[x+1,y]=Walltype.Empty;
+            if(v==misc.BOTTOM && y<4):
+                if(temp[j+5].visited==false):
+                    temp[j-5].visited=true;
+                    self.Walls.horz[x,y+1]=Walltype.Empty;
+        #connect to other sectors
+        self.Walls.horz[2,0]=Walltype.Empty;
+        self.Walls.horz[0,2]=Walltype.Empty;
+        self.Walls.horz[4,2]=Walltype.Empty;
+        self.Walls.horz[2,4]=Walltype.Empty;
+        #add force fields
+        FieldCount = 0;
+        while(FieldCount < 2):
+            x = random.randrange(1,4,1);
+            y = random.randrange(1,4,1);
+            isHorz = random.choice([true,false]);
+            if(isHorz):
+                if(self.Walls.horz[x,y]==Walltype.Normal):
+                    self.Walls.horz[x,y]==Walltype.Field;
+                    FieldCount+=1;
+            else:
+                if(self.Walls.vert[x,y]==Walltype.Normal):
+                    self.Walls.vert[x,y]==Walltype.Field;
+                    FieldCount+=1;
+                
+        
+
     def RotL():
         self.Floor.RotL();
         self.Walls.RotL();
@@ -196,7 +259,7 @@ class Tile:
 class Wall:
     def __init__(self):
         self.isPassable=true;
-        self.kind=Walltype.Empty;
+        self.kind=Walltype.Normal;
         self.cooldown = -1;
     def Explode():
         if(self.kind==Walltype.Normal):
