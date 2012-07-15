@@ -183,10 +183,10 @@ class Sector:
                     temp[j-5].visited=true;
                     self.Walls.horz[x,y+1]=Walltype.Empty;
         #connect to other sectors
-        self.Walls.horz[2,0]=Walltype.Empty;
-        self.Walls.horz[0,2]=Walltype.Empty;
-        self.Walls.horz[4,2]=Walltype.Empty;
-        self.Walls.horz[2,4]=Walltype.Empty;
+        self.Walls.horz[2][0]=Walltype.Empty;
+        self.Walls.horz[0][2]=Walltype.Empty;
+        self.Walls.horz[4][2]=Walltype.Empty;
+        self.Walls.horz[2][4]=Walltype.Empty;
         #add force fields
         FieldCount = 0;
         while(FieldCount < 2):
@@ -194,12 +194,12 @@ class Sector:
             y = random.randrange(1,4,1);
             isHorz = random.choice([true,false]);
             if(isHorz):
-                if(self.Walls.horz[x,y]==Walltype.Normal):
-                    self.Walls.horz[x,y]==Walltype.Field;
+                if(self.Walls.horz[x][y]==Walltype.Normal):
+                    self.Walls.horz[x][y]==Walltype.Field;
                     FieldCount+=1;
             else:
-                if(self.Walls.vert[x,y]==Walltype.Normal):
-                    self.Walls.vert[x,y]==Walltype.Field;
+                if(self.Walls.vert[x][y]==Walltype.Normal):
+                    self.Walls.vert[x][y]==Walltype.Field;
                     FieldCount+=1;
                 
         
@@ -214,8 +214,8 @@ class Sector:
         
 class Wallmap:
     def __init__(self):
-        self.horz = Wall[5,6];
-        self.vert = Wall[6,5];
+        self.horz = Wall[5][6];
+        self.vert = Wall[6][5];
     #how we decide to define the counting order for horz and vert will affect
     #the correctness of the rotation
     def RotL():
@@ -227,13 +227,13 @@ class Wallmap:
             for y = range(0,5,1):
                 self.swap(x,y,6-y,5-x);
     def swap(x1,y1,x2,y2):
-        temp = self.horz[x1,y1];
-        self.horz[x1,y1] = self.vert[x2,y2];
-        self.vert[x2,y2] = temp;        
+        temp = self.horz[x1][y1];
+        self.horz[x1][y1] = self.vert[x2][y2];
+        self.vert[x2][y2] = temp;        
 
 class Floorplan:
     def __init__(self):
-        self.map = Tile[5,5];
+        self.map = Tile[5][5];
     def RotL():
         for x = range(0,4,1):
             for y = range(0,4,1):
@@ -243,9 +243,9 @@ class Floorplan:
             for y = range(0,4,1):
                 self.swap(x,y,5-y,5-x);
     def swap(x1,y1,x2,y2):
-        temp = self.map[x1,y1];
-        self.map[x1,y1] = self.map[x2,y2];
-        self.map[x2,y2] = temp;
+        temp = self.map[x1][y1];
+        self.map[x1][y1] = self.map[x2][y2];
+        self.map[x2][y2] = temp;
         
 
 class Tile:
