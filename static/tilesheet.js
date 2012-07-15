@@ -11,9 +11,9 @@ function TileSheet(canvas, sheetImg, tile_w, tile_h)
     
     this.writeTile = function(tileNum, tx, ty)
     {
-	var tile_x = tileNum % horizTiles;
-	var tile_y = tileNum / horizTiles;
-	this.canvas.drawImage(this.sheet, tile_x, tile_y, this.tile_w, this.tile_h, tx, ty, this.tile_w, this.tile_h);
+	var tile_x = tileNum % this.horizTiles;
+	var tile_y = tileNum / this.horizTiles;
+	this.canvas.getContext("2d").drawImage(this.sheet[0], tile_x, tile_y, this.tile_w, this.tile_h, tx, ty, this.tile_w, this.tile_h);
     }
 }
 
@@ -38,6 +38,6 @@ function Map(sizeX, sizeY, tile_w, tile_h)
 
 	var tnum = this.arr[my*this.size_x + mx];
 
-	sheet.writeTile(tnum, mx*tile_x, my*tile_y);
+	sheet.writeTile(tnum, mx*tile_w, my*tile_h);
     }
 }
