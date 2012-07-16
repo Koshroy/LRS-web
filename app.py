@@ -31,7 +31,18 @@ def home():
 
 @app.route('/pollstate', methods=['POST'])
 def static_walls():
-    return jsonify(event='start', wallArr=swall.get_random_wall(2, 12))
+    #todo: get player nums
+    board = []
+    temp = [[], [], [], [], [],
+                     [], [], [], [0], [],
+                     [], [], [1,30], [], [],
+                     [], [0], [], [], [],
+                     [], [], [], [], []]
+    _tuple = [swall.get_random_wall(1, 12),swall.get_random_wall(1, 12),temp]
+    board.append(_tuple)
+    board.append(_tuple)
+    board.append(_tuple)
+    return jsonify(event='start',pcount=3, sector=board)
 
 @app.route('/clientevent', methods=['POST'])
 def client_event():

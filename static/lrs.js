@@ -61,19 +61,41 @@ function initFunc()
 function pollFunc()
 {
     $.post("/pollstate", {},
-	   function (data)
-	   {
-	       if (cnt++ < 20)
-		   m.renderSector(t, 1, data.wallArr[0]);
-	       
-	   }, 'json');
+	   getstate, 'json');
 }
 
-function respFunc()
+function respFunc(data)
 {
     console.log("uhuu");
+    getstate(data);
 }
 
+function getstate(data)
+{
+   var pcount = data.pcount;
+   var i;
+   var offset;
+   Position = [[0.5,2.5],[1,2,3],[0,1,2,3]];
+   switch(pcount)
+   {
+   default:
+   case 2:
+      offset = 0;
+      break;
+   case 3:
+      offset = 2;
+      break;
+   case 4:
+      offset = 5;
+      break;
+   }
+   for (i=0;i<pcount;i++)
+   {
+     // SectorState = [.hwalls,data.sector[i].vwalls,data.sector[i].notwalls];
+      //   if (cnt++ < 20)
+      m.renderSector(t, Position[pcount-2][i], offset+i, data.sector[i]);
+   }
+}
 
 
 $(document).ready(initFunc);
