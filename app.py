@@ -3,6 +3,8 @@ from contextlib import closing
 from random import choice
 import string
 
+import swall
+
 SECRET_KEY = 'Z;t\x02\x9eB\x91\xac\xd3\x98\xd8\xc6\xbc@%\xda\x95\x13\xaeJ\xed"\xcfT'
 DEBUG = True
 
@@ -20,6 +22,16 @@ def game():
 @app.route('/hello')
 def home():
     return 'hello!'
+
+# JSON Dict
+# Event: Start | Stop | None
+# Wall_arr
+# Robot_arr
+# Misc_arr
+
+@app.route('/pollstate', methods=['POST'])
+def static_walls():
+    return jsonify(event='start', wallArr=swall.get_random_wall(2, 12))
 
 
 
