@@ -5,16 +5,16 @@
   <title>Last Robot Standing</title>
 </head>
 
-<h1>Last Robot Standing</h1>
+<!-- <h1>Last Robot Standing</h1> -->
 
 <body>
   <canvas id="gameCanvas" width="640" height="640"></canvas>
+  <img style="display: none;" id="tileSheet" src="{{ url_for('static', filename='Placeholders.png') }}" />
+
+  <script type="text/javascript" src="{{ url_for('static', filename='jquery-1.7.2.min.js') }}"></script>
+  <script type="text/javascript" src="{{ url_for('static', filename='tilesheet.js') }}"></script>
+  <script type="text/javascript" src="{{ url_for('static', filename='lrs.js') }}"></script>
+
 </body>
-
-<img style="display: none;" id="tileSheet" src="{{ url_for('static', filename='Placeholders.png') }}" />
-
-<script type="text/javascript" src="{{ url_for('static', filename='jquery-1.7.2.min.js') }}"></script>
-<script type="text/javascript" src="{{ url_for('static', filename='tilesheet.js') }}"></script>
-<script type="text/javascript" src="{{ url_for('static', filename='lrs.js') }}"></script>
 
 </html>
