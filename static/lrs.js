@@ -14,6 +14,47 @@ function initFunc()
 
     setInterval(pollFunc, 1000);
 
+    $(document).keydown( function(e)
+			       {
+				   if (e.keyCode == 37)
+				   {
+				       $.post("/clientevent",
+					      {
+						  event : 'key',
+						  dir : 'left'
+					      }, respFunc, 'json');
+				       return false;
+				   }
+				   else if (e.keyCode == 38)
+				   {
+				       $.post("/clientevent",
+					      {
+						  event : 'key',
+						  dir : 'up'
+					      }, respFunc, 'json');
+				       return false;
+				   }
+				   else if (e.keyCode == 39)
+				   {
+				       $.post("/clientevent",
+					      {
+						  event : 'key',
+						  dir : 'right'
+					      }, respFunc, 'json');
+				       return false;
+				   }
+				   else if (e.keyCode == 40)
+				   {
+				       $.post("/clientevent",
+					      {
+						  event : 'key',
+						  dir : 'down'
+					      }, respFunc, 'json');
+				       return false;
+				   }
+				   else { return true; }
+			       });
+
     //m.drawTileOnMap(t, 0, 0);
 }
 
@@ -26,6 +67,11 @@ function pollFunc()
 		   m.renderSector(t, 1, data.wallArr[0]);
 	       
 	   }, 'json');
+}
+
+function respFunc()
+{
+    console.log("uhuu");
 }
 
 

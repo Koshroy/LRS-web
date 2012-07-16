@@ -33,6 +33,10 @@ def home():
 def static_walls():
     return jsonify(event='start', wallArr=swall.get_random_wall(2, 12))
 
+@app.route('/clientevent', methods=['POST'])
+def client_event():
+    return jsonify(resp='ok')
+
 
 
         
