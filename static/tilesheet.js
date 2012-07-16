@@ -15,12 +15,12 @@ function TileSheet(canvas, sheetImg, tile_w, tile_h, off_w, off_h, sheet_off, ti
     this.horizTiles = (this.sheet.width() - this.sheet_off) / this.real_tile_w;
     this.vertTiles = (this.sheet.height() - this.sheet_off) / this.real_tile_h;
 
-    console.log("real_tile_w: "+this.real_tile_w);
-    console.log("real_tile_h: "+this.real_tile_h);
+    // console.log("real_tile_w: "+this.real_tile_w);
+    // console.log("real_tile_h: "+this.real_tile_h);
 
 
-    console.log("horizTiles: "+this.horizTiles);
-    console.log("vertTiles: "+this.vertTiles);
+    // console.log("horizTiles: "+this.horizTiles);
+    // console.log("vertTiles: "+this.vertTiles);
 
     
     this.writeTile = function(tileNum, tx, ty)
@@ -28,11 +28,11 @@ function TileSheet(canvas, sheetImg, tile_w, tile_h, off_w, off_h, sheet_off, ti
 	var tile_x = (tileNum % this.horizTiles);
 	var tile_y = ((tileNum - tile_x) / this.horizTiles);
 
-	console.log("tile_x: "+tile_x);
-	console.log("tile_y: "+tile_y);
+	// console.log("tile_x: "+tile_x);
+	// console.log("tile_y: "+tile_y);
 
-	console.log("tile_spacing: "+this.tile_spacing);
-	console.log("off_w: "+this.off_w);
+	// console.log("tile_spacing: "+this.tile_spacing);
+	// console.log("off_w: "+this.off_w);
 
 	
 	this.canvas.getContext("2d").drawImage(this.sheet[0], (tile_x * this.real_tile_w) + this.off_w, (tile_y * this.real_tile_h)  + this.off_h , this.tile_w, this.tile_h, tx, ty, this.tile_w, this.tile_h);
